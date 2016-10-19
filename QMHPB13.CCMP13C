@@ -1,0 +1,103 @@
+             PGM
+/*------------------  Declaration ------------------------------*/
+             DCL        VAR(&FLDERR) TYPE(*CHAR) LEN(2)
+             DCL        VAR(&ERRERR) TYPE(*CHAR) LEN(2)
+             DCL        VAR(&USERID) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&PGMQ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&MSGK) TYPE(*CHAR) LEN(4)
+             DCL        VAR(&SEND) TYPE(*CHAR) LEN(720)
+             DCLF       FILE(CCMP13D)
+
+/*------------------  Initialization  --------------------------*/
+             CHGVAR     VAR(&FMERRM) VALUE(' ')
+             CHGVAR     VAR(&FMFUNC) VALUE('F1=Exit')
+             RTVUSRPRF  RTNUSRPRF(&USERID)
+             /*-----  Retrieve CLP Name ------------------------*/
+             SNDPGMMSG  MSG(' ') TOPGMQ(*SAME) MSGTYPE(*INFO) KEYVAR(&MSGK)
+             RCVMSG     PGMQ(*SAME (* *NONE *NONE)) MSGTYPE(*INFO) +
+                          RMV(*YES) SENDER(&SEND) SENDERFMT(*LONG)
+             CHGVAR     VAR(&PGMQ) VALUE(%SST(&SEND 42 10))
+             CHGVAR     VAR(&F1OPID) VALUE(&USERID)
+             CHGVAR     VAR(&FHPGMQ) VALUE(&PGMQ)
+
+/*------------------  Main Process    --------------------------*/
+FIRST:       DOWHILE    COND(&IN01 *EQ '0') /* While F1 is not Pressed */
+/*------------------  First Screen    --------------------------*/
+
+             CHGVAR     VAR(&FLDERR) VALUE(' ')
+             SNDF       RCDFMT(FMTMSG)
+             SNDF       RCDFMT(FMTHED)
+             SNDRCVF    RCDFMT(FMT010)
+             IF         COND(&IN01 *EQ '1') THEN(GOTO CMDLBL(END))
+             CHGVAR     VAR(&F2OPTN) VALUE(0)
+
+/*------------------  Second Screen   --------------------------*/
+SECOND:      DOWHILE    COND(&IN01 *EQ '0')
+/*--------------------------------------------------------------*/
+             SNDF       RCDFMT(FMTMSG)
+             SNDF       RCDFMT(FMTHE2)
+             SNDRCVF    RCDFMT(FMT020)
+
+/*------------------  Display Window  --------------------------*/
+             IF         COND(&IN01 *EQ '1') THEN(DO)
+             CALL       PGM(CSL613C) PARM(&FLDERR)
+             CHGVAR     VAR(&IN01) VALUE('0')
+             CHGVAR     VAR(&IN50) VALUE('0')
+             CHGVAR     VAR(&FMERRM) VALUE(' ')
+
+             IF         COND(&FLDERR *EQ 'KL') THEN(GOTO +
+                          CMDLBL(SECOND))
+             IF         COND(&FLDERR *EQ '00') THEN(GOTO CMDLBL(FIRST))
+             ENDDO
+/* OPTN = 0 */
+             IF         COND(&F2OPTN *EQ 0) THEN(DO)
+             CHGVAR     VAR(&FMERRM) VALUE('MCM0002 Compulsory Item. +
+                          Please Input')
+             CHGVAR     VAR(&IN50) VALUE('1')
+             GOTO       CMDLBL(SECOND)
+             ENDDO
+/* OPTN > 5 */
+             IF         COND(&F2OPTN *GT 5) THEN(DO)
+             CHGVAR     VAR(&FMERRM) VALUE('MCM0003 Invalid Input')
+             CHGVAR     VAR(&IN50) VALUE('1')
+             GOTO       CMDLBL(SECOND)
+             ENDDO
+/* OPTN = 1 TO 5 */
+             ELSE       CMD(DO)
+             CHGVAR     VAR(&IN50) VALUE('0')
+             CHGVAR     VAR(&FMERRM) VALUE(' ')
+
+/* 1 */      IF         COND(&F2OPTN *EQ 1) THEN(DO)
+             CALL       PGM(CSL113R) PARM(&FLDERR)
+             CHGVAR     VAR(&F2OPTN) VALUE(0)
+             ENDDO
+/* 2 */      IF         COND(&F2OPTN *EQ 2) THEN(DO)
+             CALL       PGM(CSL213R) PARM(&FLDERR)
+             CHGVAR     VAR(&F2OPTN) VALUE(0)
+             ENDDO
+/* 3 */      IF         COND(&F2OPTN *EQ 3) THEN(DO)
+             CALL       PGM(CSL313R) PARM(&FLDERR)
+             CHGVAR     VAR(&F2OPTN) VALUE(0)
+             ENDDO
+PRINT:       IF         COND(&F2OPTN *EQ 4) THEN(DO)
+/* 4 */      CALL       PGM(CSL413R) PARM(&FLDERR &ERRERR)
+             IF         COND(&FLDERR *NE 'KL' *AND &FLDERR *NE '00' +
+                          *AND &F2OPTN *EQ 4) THEN(DO)
+             CHGVAR     VAR(&F2OPTN) VALUE(4)
+             GOTO       CMDLBL(PRINT)
+             ENDDO
+             CHGVAR     VAR(&F2OPTN) VALUE(0)
+             ENDDO
+
+
+/* 5 */      IF         COND(&F2OPTN *EQ 5) THEN(DO)
+             CALL       PGM(CSL513C)
+             CHGVAR     VAR(&F2OPTN) VALUE(0)
+             ENDDO
+             IF         COND(&FLDERR *EQ '00') THEN(GOTO CMDLBL(FIRST))
+             IF         COND(&FLDERR *EQ 'KL') THEN(GOTO CMDLBL(SECOND))
+             ENDDO
+
+             ENDDO      /* End of Second Screen */
+             ENDDO      /* End of First Screen */
+END:         ENDPGM

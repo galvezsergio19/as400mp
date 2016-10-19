@@ -1,0 +1,6 @@
+     A          R ACC13RF
+     A            ACREDN        16S 0       COLHDG('Card Number')
+     A            ACREDA        11S 0       COLHDG('Credit Limit')
+     A            ACREDU        11S 0       COLHDG('Credit Limit Used')
+     A            ACREDP         6S 0       COLHDG('Points Earned')
+     A          K ACREDN

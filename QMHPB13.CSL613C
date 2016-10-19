@@ -1,0 +1,11 @@
+             PGM        PARM(&FLDERR)
+             DCL        VAR(&FLDERR) TYPE(*CHAR) LEN(2)
+             DCLF       FILE(CSL613D)
+             SNDRCVF    RCDFMT(WDW010)
+             IF         COND(&IN12 *EQ '1') THEN(DO)
+             CHGVAR     VAR(&FLDERR) VALUE('KL')
+             ENDDO
+             ELSE       CMD(DO)
+             CHGVAR VAR(&FLDERR) VALUE('00')
+             ENDDO
+END:         ENDPGM

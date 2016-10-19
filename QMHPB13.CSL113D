@@ -1,0 +1,187 @@
+     A                                      DSPSIZ(24 80 *DS3)
+     A*========================================================================*
+     A*                                                                        *
+     A*       AEON CREDIT SERVICE SYSTEM                                       *
+     A*                                                                        *
+     A*       PROJECT ID  :  CC-9999-99-999                                    *
+     A*       FILE ID     :  CSL113D                                           *
+     A*       FUNCTION    :  SALES INPUT                                       *
+     A*       AUTHOR      :  ACSS-SGALVEZ                                      *
+     A*       CODING DATE :  2015/03/31                                        *
+     A*                                                                        *
+     A*========================================================================*
+     A* MODIFICATION LOGS                                                      *
+     A* ~~~~~~~~~~~~~~~~~                                                      *
+     A* VER.   PROJECT          PIC            DATE        DESCRIPTION         *
+     A*------------------------------------------------------------------------*
+     A*                                                                        *
+     A*========================================================================*
+     A**************************************************************************
+     A          R FMTHED
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                  1 73DATE
+     A                                      EDTCDE(Y)
+     A                                  2 73TIME
+     A                                  2  2USER
+     A                                  1 25'CREDIT CARD SYSTEM  -'
+     A                                  1 48'SALES INPUT'
+     A                                      COLOR(BLU)
+     A            FHPGMQ        10A  O  1  2
+     A**************************************************************************
+     A          R FMT010
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                      CF01(01 'EXIT')
+     A                                      CF03(03 'MENU')
+     A                                 10 22'Card Number   :'
+     A            F1CNBR        16Y 0B 10 38EDTCDE(4)
+     A  61                                  DSPATR(RI)
+     A                                      DSPATR(UL)
+     A  61                                  DSPATR(PC)
+     A                                 12 22'Expiry Date   :'
+     A            F1EDTE         4Y 0B 12 38EDTWRD('  /  ')
+     A*                                     EDTMSK('  &  ')
+     A  62                                  DSPATR(RI)
+     A                                      DSPATR(UL)
+     A  62                                  DSPATR(PC)
+     A                                 12 46'(MM/YY)'
+     A**************************************************************************
+     A          R FMT020
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                      CF01(01 'EXIT')
+     A                                      CF03(03 'MENU')
+     A                                      CF12(12 'CANCEL')
+     A                                  6  2'CUSTOMER INFORMATION'
+     A                                      COLOR(WHT)
+     A                                      DSPATR(UL)
+     A                                  7  3'Card Number    :'
+     A            F2CNBR        16Y 0O  7 20EDTWRD('    -    -    -    ')
+     A                                  7 52'I.D. Number   :'
+     A            F2IDNO        11A  O  7 68
+     A                                  8  3'Member Name    :'
+     A            F2MNME        30A  O  8 20
+     A                                  8 52'Gender        :'
+     A            F2GCDE         1A  O  8 68
+     A            F2GDES         8A  O  8 71
+     A                                  9  3'Title          :'
+     A            F2TCDE         1A  O  9 20
+     A            F2TDES         8A  O  9 23
+     A                                  9 52'Date of Birth :'
+     A            F2CDOB         8Y 0O  9 68EDTWRD('  -  -    ')
+     A                                 10  3'Marital Status :'
+     A            F2SCDE         1A  O 10 20
+     A            F2SDES         8A  O 10 23
+     A                                 10 52'Mobile Number :'
+     A            F2MNBR        11S 0O 10 68
+     A                                 11  3'Home Address   :'
+     A            F2ADR1        30A  O 11 20
+     A            F2ADR2        30A  O 12 20
+     A            F2ADR3        30A  O 13 20
+     A                                 11 52'Application'
+     A                                 12 52'Date          :'
+     A            F2ADTE         8Y 0O 12 68EDTWRD('  -  -    ')
+     A                                 13 52'Expiry Date   :'
+     A            F2EDTE         6Y 0O 13 68EDTWRD('  -    ')
+     A                                 15  2'ACCOUNT INFORMATION'
+     A                                      COLOR(WHT)
+     A                                      DSPATR(UL)
+     A                                 16  3'Customer Credit Limit  :'
+     A            F2CAMT        11Y 0O 16 28EDTCDE(1)
+     A                                 17  3'Credit Limit Used      :'
+     A            F2CUSE        11Y 0O 17 28EDTCDE(1)
+     A                                 18  3'Available Credit Limit :'
+     A            F2CAVL        11Y 0O 18 28EDTCDE(1)
+     A                                 19  3'Points Earned          :'
+     A            F2PERN         6Y 0O 19 35EDTCDE(1)
+     A**************************************************************************
+     A          R FMT030
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                      CF01(01 'EXIT')
+     A                                      CF02(02 'PREVIOUS')
+     A                                      CF03(03 'MENU')
+     A                                      CF10(10 'START')
+     A                                      CF12(12 'CANCEL')
+     A                                  7  3'Card Number    :'
+     A            F3CNBR        16Y 0O  7 20EDTWRD('    -    -    -    ')
+     A                                  7 52'I.D. Number   :'
+     A            F3IDNO        11A  O  7 68
+     A                                  8  3'Member Name    :'
+     A            F3MNME        30A  O  8 20
+     A                                 10  6'Transaction Date    :'
+     A            F3TDAY         2Y 0B 10 29EDTCDE(4)
+     A  73                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  73                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A                                 10 32'/'
+     A            F3DMTH         2Y 0B 10 34EDTCDE(4)
+     A  74                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  74                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A                                 10 37'/'
+     A            F3DYER         4Y 0B 10 39EDTCDE(4)
+     A  75                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  75                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A                                 11  6'Transaction Amount  :'
+     A            F3TAMT         9Y 0B 11 29EDTCDE(1)
+     A  76                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  76                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A                                 12 14'Agent Name  :'
+     A            F3ACDE         2Y 0B 12 29
+     A  77                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  77                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A                                      EDTCDE(4)
+     A            F3ADES        12A  O 12 33
+     A                                 13 15'Shop Name  :'
+     A            F3SNME        30A  B 13 29
+     A  78                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  78                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A                                 14 12'Terminal No.  :'
+     A            F3TNBR        10A  B 14 29
+     A  79                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  79                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A                                 15 12'Product Code  :'
+     A            F3PCDE         2Y 0B 15 29
+     A  80                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  80                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A                                      EDTCDE(4)
+     A            F3PDES        30A  O 15 33
+     A                                 16 14'Sales Type  :'
+     A                                 19  7'Reference Number   :'
+     A N26                                  DSPATR(ND)
+     A            F3RNBR        10   O 19 28COLOR(RED)
+     A                                      DSPATR(BL)
+     A N26                                  DSPATR(ND)
+     A            F3STYP         2A  O 16 29
+     A**************************************************************************
+     A          R FMTCNF
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                      CF02(02 'PREVIOUS')
+     A                                 22 64'Confirm(Y/N)'
+     A            FCCCDE         1A  B 22 77
+     A  82                                  DSPATR(RI)
+     A                                      DSPATR(UL)
+     A  82                                  DSPATR(PC)
+     A**************************************************************************
+     A          R FMTMSG
+     A**************************************************************************
+     A            FMERRM        78   O 23 02COLOR(RED)
+     A                                      DSPATR(BL)
+     A            FMFKEY        78   O 24  2COLOR(BLU)

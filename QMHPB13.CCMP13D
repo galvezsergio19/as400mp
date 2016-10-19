@@ -1,0 +1,317 @@
+     A                                      DSPSIZ(24 80 *DS3)
+     A*========================================================================*
+     A*                                                                        *
+     A*       AEON CREDIT SERVICE SYSTEM                                       *
+     A*                                                                        *
+     A*       PROJECT ID  :  CC-9999-99-999                                    *
+     A*       FILE ID     :  CCMP13D                                           *
+     A*       FUNCTION    :  WELCOME SCREEN                                    *
+     A*       AUTHOR      :  ACSS-SGALVEZ                                      *
+     A*       CODING DATE :  2015/03/31                                        *
+     A*                                                                        *
+     A*========================================================================*
+     A* MODIFICATION LOGS                                                      *
+     A* ~~~~~~~~~~~~~~~~~                                                      *
+     A* VER.   PROJECT          PIC            DATE        DESCRIPTION         *
+     A*------------------------------------------------------------------------*
+     A*                                                                        *
+     A*========================================================================*
+     A**************************************************************************
+     A          R FMTHED
+     A**************************************************************************
+     A                                      OVERLAY
+     A            FHPGMQ        10A  O  1  2
+     A                                  2  2USER
+     A                                  1 73DATE
+     A                                      EDTCDE(Y)
+     A                                  2 73TIME
+     A                                  2 30'<<  Main  Menu  >>'
+     A                                  1 28'CREDIT SERVICE SYSTEM'
+     A                                      COLOR(WHT)
+     A**************************************************************************
+     A          R FMTHE2
+     A**************************************************************************
+     A                                      OVERLAY
+     A            FHPGMQ        10A  O  1  2
+     A                                  2  2USER
+     A                                  1 73DATE
+     A                                      EDTCDE(Y)
+     A                                  2 73TIME
+     A                                  1 25'CREDIT CARD SYSTEM  -'
+     A                                  1 48'SALES MENU'
+     A                                      COLOR(BLU)
+     A**************************************************************************
+     A          R FMT010
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                      CF01(01)
+     A                                  9 18'Welcome To'
+     A                                      COLOR(WHT)
+     A                                 10 26'Aeon Group System'
+     A                                      COLOR(WHT)
+     A                                  4 18'       '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  5 17'        '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  6 16'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  6 22'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  7 22'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  8 22'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 11 22'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 12 22'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 13 22'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 15 22'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 16 22'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                  5 26'             '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  6 26'             '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  7 26'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  8 26'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 11 26'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 12 26'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 13 26'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 15 26'             '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                  7 40'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  8 40'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  6 41'    '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  5 42'          '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 11 40'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 12 40'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 13 40'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 15 43'         '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                  6 50'    '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  9 56'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 10 56'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 11 56'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 12 56'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 13 56'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 15 56'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 16 56'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                  4 56'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  5 56'    '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  6 56'     '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  7 56'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  8 56'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  7 60'  '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  8 61'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  9 63'  '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 10 64'  '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 11 65'  '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 12 66'  '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 13 67'     '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                  4 69'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  5 69'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  6 69'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  7 69'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  8 69'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  9 69'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 10 69'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 11 69'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 12 69'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 15 69'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 16 69'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 14 68'    '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 14 56'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 14 26'             '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 14 22'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 14 41'    '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 14 50'    '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                  7 15'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  8 14'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  9 13'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 10 12'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 11 11'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 12 10'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 13  9'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 14  8'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 15  7'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 16  6'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 18 19'Operator'
+     A                                 18 28'ID'
+     A            F1OPID        10A  O 18 34
+     A                                  7 52'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  8 52'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                  9 52'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 10 52'   '
+     A                                      COLOR(RED)
+     A                                      DSPATR(RI)
+     A                                 11 52'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 12 52'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A                                 13 52'   '
+     A                                      COLOR(WHT)
+     A                                      DSPATR(RI)
+     A**************************************************************************
+     A          R FMT020
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                      CF01(01)
+     A                                  7 30'01 Sales Input'
+     A                                  8 30'02 Sales Adjustment'
+     A                                  9 30'03 Sales Inquiry'
+     A                                 10 30'04 Sales Report'
+     A                                 11 30'05 Query'
+     A                                 20 32'Option'
+     A            F2OPTN         2Y 0B 20 41
+     A  50                                  DSPATR(RI)
+     A                                      EDTCDE(4)
+     A**************************************************************************
+     A          R FMTMSG
+     A**************************************************************************
+     A            FMERRM        78A  O 23  2DSPATR(HI)
+     A                                      DSPATR(BL)
+     A            FMFUNC        78A  O 24  2COLOR(BLU)

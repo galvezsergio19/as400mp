@@ -1,0 +1,7 @@
+     R          R GPF13RF
+     A            GPARMN         2S 0       COLHDG('Parameter No.')
+     A            GPARMD        20A         COLHDG('Parameter Desc')
+     A            GCODGN         2A         COLHDG('Code')
+     A            GCODGD        20A         COLHDG('Code Desc')
+     A          K GPARMN
+     A          K GCODGN

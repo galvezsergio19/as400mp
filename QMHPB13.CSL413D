@@ -1,0 +1,67 @@
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF01(01 'EXIT')
+     A                                      CF03(03 'MENU')
+     A*========================================================================*
+     A*                                                                        *
+     A*       AEON CREDIT SERVICE SYSTEM                                       *
+     A*                                                                        *
+     A*       PROJECT ID  :  CC-9999-99-999                                    *
+     A*       FILE ID     :  CSL413D                                           *
+     A*       FUNCTION    :  SALES REPORT                                      *
+     A*       AUTHOR      :  ACSS-SGALVEZ                                      *
+     A*       CODING DATE :  2015/03/31                                        *
+     A*                                                                        *
+     A*========================================================================*
+     A* MODIFICATION LOGS                                                      *
+     A* ~~~~~~~~~~~~~~~~~                                                      *
+     A* VER.   PROJECT          PIC            DATE        DESCRIPTION         *
+     A*------------------------------------------------------------------------*
+     A*                                                                        *
+     A*========================================================================*
+     A**************************************************************************
+     A          R FMTHED
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                  1 73DATE
+     A                                      EDTCDE(Y)
+     A                                  2 73TIME
+     A                                  2  2USER
+     A                                  1 25'CREDIT CARD SYSTEM  -'
+     A                                  1 48'SALES REPORT'
+     A                                      COLOR(BLU)
+     A            FHPGMQ        10A  O  1  2
+     A**************************************************************************
+     A          R FMT010
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                  8 17'Sales Type :  CP'
+     A                                 10 16'- Range -         From            -
+     A                                       To'
+     A                                      COLOR(WHT)
+     A                                 11 17'Sales      :'
+     A            F1FDTE         8Y 0B 11 31EDTWRD('    /  /  ')
+     A  73                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  73                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A            F1TDTE         8Y 0B 11 48EDTWRD('    /  /  ')
+     A  74                                  DSPATR(RI)
+     A N23                                  DSPATR(UL)
+     A  74                                  DSPATR(PC)
+     A  23                                  DSPATR(PR)
+     A**************************************************************************
+     A          R FMTCNF
+     A**************************************************************************
+     A                                      OVERLAY
+     A                                      CF02(02 'PREVIOUS')
+     A                                 22 64'Confirm(Y/N)'
+     A            FCCCDE         1A  B 22 77
+     A  82                                  DSPATR(RI)
+     A                                      DSPATR(UL)
+     A  82                                  DSPATR(PC)
+     A**************************************************************************
+     A          R FMTMSG
+     A**************************************************************************
+     A            FMERRM        78   O 23 02COLOR(RED)
+     A                                      DSPATR(BL)
+     A            FMFKEY        78   O 24  2COLOR(BLU)

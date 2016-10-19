@@ -1,0 +1,15 @@
+     R          R CUS13RF
+     A            CUSCDN        16S 0       COLHDG('Card No.')
+     A            CUSIDN        11S 0       COLHDG('ID Number')
+     A            CUSNME        30A         COLHDG('Customer Name')
+     A            CUSTTL         1S 0       COLHDG('Title')
+     A            CUSGDR         1A         COLHDG('Gender')
+     A            CUSDOB         8S 0       COLHDG('Date of Birth')
+     A            CUSMRS         1S 0       COLHDG('Marital Status')
+     A            CUSHM1        30A         COLHDG('Home Address 1')
+     A            CUSHM2        30A         COLHDG('Home Address 2')
+     A            CUSHM3        30A         COLHDG('Home Address 3')
+     A            CUSMOB        11S 0       COLHDG('Mobile Number')
+     A            CUSADT         8S 0       COLHDG('Application Date')
+     A            CUSEDT         6S 0       COLHDG('Expiry Date')
+     A          K CUSCDN

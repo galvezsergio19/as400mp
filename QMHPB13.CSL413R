@@ -1,0 +1,444 @@
+     H            Y
+     FCSL413D CF  E                    WORKSTN
+     FCSL413P O   E             60     PRINTER
+     FCUS13PF IF  E           K        DISK
+     FSLS13PF IF  E           K        DISK         KINFDS PFINFO
+      *
+      *- Logical Files
+      *
+     FSLS13L3 IF  E           K        DISK
+     F            SLS13RF                           KRENAMESLS13LR
+      *
+      * Error Messages and Function Keys
+      *
+     E                    FK      1   2 78
+     E                    EM      1  11 78
+      **********************************************************
+      *          DATA STRUCTURES                               *
+      **********************************************************
+      *-- Record Count
+     IPFINFO      DS
+     I                                    B 156 1590NUMBRE
+      *-- Program Name
+     I           SDS
+     I                                        1  10 PGMNM
+      *-- Credit Purchase
+     I            DS
+     I I            'Credit Purchase'         1  30 CPDESC
+      *-- Date From DS
+     IDDT1        DS
+     I                                        1   80F1FDTE
+     I                                        1   40YDTE1
+     I                                        5   60MDTE1
+     I                                        7   80DDTE1
+      *-- Date To DS
+     IDDT2        DS
+     I                                        1   80F1TDTE
+     I                                        1   40YDTE2
+     I                                        5   60MDTE2
+     I                                        7   80DDTE2
+      *-- Validation (YMD)
+     IDDTE        DS
+     I                                        1   80DSDTE
+     I                                        1   40YYDTE
+     I                                        5   60MMDTE
+     I                                        7   80DDDTE
+      **********************************************************
+      *          PARAMETER LIST                                *
+      **********************************************************
+     C           *ENTRY    PLIST                           F1 Window
+     C                     PARM           PRMFLD  2
+     C                     PARM           ERRFLD  2
+      *
+     C           PRMDTE    PLIST                           Date Validation (JVM900R)
+     C                     PARM           P@MOVE  1
+     C                     PARM           P@IFMT  1
+     C                     PARM           P@OFMT  1
+     C                     PARM           P@FRDT  80
+     C                     PARM           P@TODT  80
+     C                     PARM           P@BFAF  1
+     C                     PARM           P@DCNT  30
+     C                     PARM           P@OTDT  80
+     C                     PARM           P@RTCD  2
+      **********************************************************
+      *          KEY LIST                                      *
+      **********************************************************
+     C           KEY#3     KLIST                           SALES PF
+     C                     KFLD           VAR5   160
+     C                     KFLD           VAR6   10
+      **********************************************************
+      *          MAIN LOOP PROGRAM                             *
+      **********************************************************
+      *
+     C           RPLOOP    CASEQ*BLANK    SB0000           Initialization
+     C           RPLOOP    CASEQ'1'       SB0001           Input Date
+     C           RPLOOP    CASEQ'E'       SBEND            End
+     C                     ENDCS
+      *
+      **********************************************************
+      *          ROUTINE 0000 - INITIALIZE                     *
+      **********************************************************
+     C           SB0000    BEGSR
+     C                     MOVELPGMNM     FHPGMQ
+     C                     MOVEL*BLANK    FMERRM
+     C                     SETOF                     7374
+     C                     MOVEL'1'       RPLOOP  1
+     C                     MOVEL*DATE     DDT1
+     C                     MOVEL*DATE     DDT2
+     C                     SETOF                     9899
+     C                     MOVEL*BLANKS   PRMFLD
+      * Success Message
+      *
+     C           ERRFLD    IFEQ 'Y'
+     C                     MOVELEM,10     FMERRM           Success Message
+     C                     MOVEL'N'       ERRFLD
+     C                     ELSE
+     C                     MOVEL*BLANKS   FMERRM
+     C                     ENDIF
+      *
+     C                     ENDSR
+      **********************************************************
+      *          ROUTINE 0001 - INPUTS                         *
+      **********************************************************
+     C           SB0001    BEGSR
+     C                     SETOF                     23
+     C                     MOVELFK,1      FMFKEY
+     C                     WRITEFMTMSG
+     C                     WRITEFMTHED
+     C                     EXFMTFMT010
+     C                     EXSR SBFKEY                     F1 / F3
+     C           *INKA     IFEQ *OFF                       ENTER
+     C           *INKC     ANDEQ*OFF
+     C                     EXSR SBDTE1
+     C                     ENDIF
+     C                     ENDSR
+      **********************************************************
+      *          ROUTINE DATE - 00001                          *
+      **********************************************************
+     C           SBDTE1    BEGSR
+     C                     SELEC
+      * BOTH ZEROS
+     C           F1FDTE    WHEQ *ZEROS
+     C           F1TDTE    ANDEQ*ZEROS
+     C                     SETON                     7374
+     C                     MOVELEM,2      FMERRM
+      * NEITHER ZEROS
+     C           F1FDTE    WHEQ *ZEROS
+     C           F1TDTE    OREQ *ZEROS
+      * TO
+     C           F1TDTE    IFEQ *ZEROS
+     C                     SETON                     74
+     C                     MOVELEM,2      FMERRM
+     C                     ELSE
+     C                     EXSR SBTDTE
+     C                     ENDIF
+      * FROM
+     C           F1FDTE    IFEQ *ZEROS
+     C                     SETON                     73
+     C                     MOVELEM,2      FMERRM
+     C                     ELSE
+     C                     EXSR SBFDTE
+     C                     ENDIF
+      *
+      * BOTH NOT ZEROS
+      *
+     C           F1FDTE    WHNE *ZEROS
+     C           F1TDTE    ANDNE*ZEROS
+     C                     SETOF                     7374
+     C                     MOVEL*BLANKS   FMERRM
+      * VALIDATE ALL
+     C                     EXSR SBFDTE
+     C                     EXSR SBTDTE
+     C                     EXSR SBFDTY
+     C                     EXSR SBTDTY
+      * ERROR 1
+     C           *IN98     IFEQ *ON
+     C                     MOVELEM,1      FMERRM
+     C                     ENDIF
+     C           *IN99     IFEQ *ON
+     C                     MOVELEM,1      FMERRM
+     C                     ENDIF
+      * ERROR 2
+      *
+     C  N98N99   *IN60     IFEQ *ON
+     C                     MOVELEM,11     FMERRM
+     C                     ENDIF
+     C  N98N99   *IN61     IFEQ *ON
+     C                     MOVELEM,11     FMERRM
+     C                     ENDIF
+      * VALID DATE
+     C           *IN98     IFEQ *OFF
+     C           *IN99     ANDEQ*OFF
+      *
+      *- DATE FROM < DATE TO
+      *
+     C           *IN60     IFEQ *OFF
+     C           *IN61     ANDEQ*OFF
+     C           F1FDTE    IFGT F1TDTE
+     C                     SETON                     7374
+     C                     SETON                     9899
+     C                     MOVELEM,9      FMERRM
+     C                     ENDIF
+     C           F1FDTE    IFLE F1TDTE
+     C                     SETOF                     737482
+     C                     MOVEL*BLANKS   FMERRM
+     C                     EXSR SBCONF
+     C                     ENDIF
+      *
+     C                     ENDIF
+     C                     ENDIF
+      *
+     C                     ENDSL
+     C                     ENDSR
+      **********************************************************
+      *          FROM DATE TODAY                               *
+      **********************************************************
+     C           SBFDTY    BEGSR
+     C                     MOVEL*DATE     DSDTE
+      * DATE TODAY
+     C           YDTE1     IFLE YYDTE
+     C           MDTE1     IFLE MMDTE
+     C           DDTE1     ANDLEDDDTE
+     C                     SETOF                     7360
+     C                     ELSE
+     C                     SETON                     7360
+     C                     ENDIF
+      *
+     C                     ELSE
+     C                     SETON                     7360
+     C                     ENDIF
+     C                     ENDSR
+      **********************************************************
+      *          TO DATE TODAY                                 *
+      **********************************************************
+     C           SBTDTY    BEGSR
+     C                     MOVEL*DATE     DSDTE
+      * DATE TODAY
+     C           YDTE2     IFLE YYDTE
+     C           MDTE2     IFLE MMDTE
+     C           DDTE2     ANDLEDDDTE
+     C                     SETOF                     7461
+     C                     ELSE
+     C                     SETON                     7461
+     C                     ENDIF
+      *
+     C                     ELSE
+     C                     SETON                     7461
+     C                     ENDIF
+     C                     ENDSR
+      **********************************************************
+      *          JVM900R VALIDATOR                             *
+      **********************************************************
+     C           SBJVMR    BEGSR
+     C                     MOVEL'3'       P@MOVE
+     C                     MOVELVALDAT    P@FRDT
+     C                     MOVEL*ZEROS    P@TODT
+     C                     MOVEL'A'       P@BFAF
+     C                     MOVEL*ZEROS    P@DCNT
+     C                     MOVEL' '       P@OTDT
+     C                     MOVEL' '       P@RTCD
+     C                     CALL 'JVM900R' PRMDTE
+     C                     ENDSR
+      **********************************************************
+      *          FROM DATE VALIDATOR                           *
+      **********************************************************
+     C           SBFDTE    BEGSR
+     C                     MOVEL'Y'       P@IFMT
+     C                     MOVEL'Y'       P@OFMT
+     C                     Z-ADDF1FDTE    VALDAT  80
+     C                     EXSR SBJVMR
+     C           P@RTCD    IFEQ '99'
+     C                     SETON                     7398
+     C                     MOVELEM,1      FMERRM
+     C                     ELSE
+     C                     SETOF                     7398
+     C                     ENDIF
+     C                     ENDSR
+      **********************************************************
+      *          TO DATE VALIDATOR                             *
+      **********************************************************
+     C           SBTDTE    BEGSR
+     C                     MOVEL'Y'       P@IFMT
+     C                     MOVEL'Y'       P@OFMT
+     C                     Z-ADDF1TDTE    VALDAT  80
+     C                     EXSR SBJVMR
+     C           P@RTCD    IFEQ '99'
+     C                     SETON                     7499
+     C                     MOVELEM,1      FMERRM
+     C                     ELSE
+     C                     SETOF                     7499
+     C                     ENDIF
+     C                     ENDSR
+      **********************************************************
+      *          FUNCTION KEYS                                 *
+      **********************************************************
+     C           SBFKEY    BEGSR
+     C                     SELEC
+      * F1
+     C           *INKA     WHEQ *ON
+     C                     EXSR WD0001
+      * F1 + F12
+     C           PRMFLD    IFEQ 'KL'
+     C                     MOVEL*BLANKS   FMERRM
+     C                     SETOF                     7374
+     C                     ENDIF
+      * F3
+     C           *INKC     WHEQ *ON
+     C                     MOVEL'KL'      PRMFLD
+     C                     MOVEL'E'       RPLOOP
+     C                     ENDSL
+     C                     ENDSR
+      **********************************************************
+      *          CONFIRM ROUTINE                               *
+      **********************************************************
+     C           SBCONF    BEGSR
+     C                     MOVEL*BLANKS   FCCCDE
+     C           *INKB     DOWEQ*OFF
+     C           FCCCDE    ANDNE'Y'
+     C           FCCCDE    ANDNE'N'
+      *
+      * Show Confirm Screen
+      *
+     C                     SETON                     23
+     C                     MOVELFK,2      FMFKEY
+     C                     WRITEFMTMSG
+     C                     WRITEFMTHED
+     C                     WRITEFMT010
+     C                     EXFMTFMTCNF
+      *
+     C                     SELEC
+      * Opt N or F2
+      *
+     C           *INKB     WHEQ *ON
+     C           FCCCDE    OREQ 'N'
+     C                     MOVEL'1'       RPLOOP
+     C                     MOVEL*BLANKS   FMERRM
+     C                     MOVEL'N'       ERRFLD
+      * Opt Blank
+      *
+     C           FCCCDE    WHEQ *BLANKS
+     C                     SETON                     82
+     C                     MOVELEM,2      FMERRM
+      * Opt Not Y or N
+      *
+     C           FCCCDE    WHNE 'Y'
+     C           FCCCDE    ANDNE'N'
+     C                     SETON                     82
+     C                     MOVELEM,3      FMERRM
+      * Opt Y
+      *
+     C           FCCCDE    WHEQ 'Y'
+     C                     EXSR SBPRTF
+     C                     MOVEL'E'       RPLOOP
+     C                     MOVEL'Y'       ERRFLD
+     C                     ENDSL
+      *
+     C                     ENDDO
+     C                     ENDSR
+      **********************************************************
+      *          WINDOW ROUTINE 0001                           *
+      **********************************************************
+     C           WD0001    BEGSR
+     C                     MOVEL*BLANKS   PRMFLD
+     C                     CALL 'CSL613C'
+     C                     PARM           PRMFLD
+      * Enter Pressed
+      *
+     C           PRMFLD    IFEQ '00'
+     C                     MOVEL*BLANKS   RPLOOP
+     C                     SETON                     LR
+     C                     ENDIF
+      *
+     C                     ENDSR
+      **********************************************************
+      *          PRINT FILE ROUTINE                            *
+      **********************************************************
+     C           SBPRTF    BEGSR
+     C                     Z-ADD0         SEQNBR  30
+     C                     Z-ADD0         AMTNBR  90
+     C                     MOVELCPDESC    H2SDSC
+     C                     MOVELF1FDTE    H1FDAT
+     C                     MOVELF1TDTE    H1TDAT
+     C                     MOVEL'CP'      H2STYP
+     C                     WRITEHDR001                     Write Header 1
+     C                     WRITEHDR002                     Write Header 2
+     C                     WRITEHDR003                     Write Header 3
+     C           NUMBRE    IFNE 0
+      *-- READ PF
+     C           *LOVAL    SETLLSLS13LR
+     C                     READ SLS13LR                  95
+     C           *IN95     DOWEQ*OFF
+      *-- OVERFLOWS
+     C           *IN60     IFEQ *ON
+     C                     WRITEHDR001                     Write Header 1
+     C                     WRITEHDR002                     Write Header 2
+     C                     WRITEHDR003                     Write Header 3
+     C                     SETOF                     60
+     C                     ENDIF
+      *-- RANGE
+     C           SALDTE    IFGE F1FDTE
+     C           SALDTE    ANDLEF1TDTE
+      *
+      *
+     C                     ADD  1         SEQNBR
+     C                     ADD  SALAMT    AMTNBR
+     C                     Z-ADDSEQNBR    D1CNTR
+     C                     MOVELSALCDN    D1CDNM
+     C           SALCDN    CHAINCUS13RF              96
+     C                     MOVELCUSNME    D1CSNM
+      * SALES DATE
+     C                     MOVEL'Y'       P@IFMT
+     C                     MOVEL'D'       P@OFMT
+     C                     Z-ADDSALDTE    VALDAT  80
+     C                     EXSR SBJVMR
+     C                     MOVELP@OTDT    D1SLDT
+     C                     MOVELSALREF    D1RFNM
+      * POST DATE
+     C                     MOVEL'Y'       P@IFMT
+     C                     MOVEL'D'       P@OFMT
+     C                     Z-ADDSALPDT    VALDAT  80
+     C                     EXSR SBJVMR
+     C                     MOVELP@OTDT    D1RLDT
+     C                     MOVELSALAMT    D1RLAT
+     C                     WRITEDTL001
+     C                     ENDIF
+     C                     READ SLS13LR                  95
+     C                     ENDDO
+      * RECORDS
+     C           SEQNBR    IFEQ 0
+     C                     WRITEFTR001                     No Records Found
+     C                     ELSE
+     C                     Z-ADDSEQNBR    T1CNTR
+     C                     Z-ADDAMTNBR    T1TSAL
+     C                     WRITETTL001
+     C                     ENDIF
+     C                     WRITEFTR002
+      *
+     C                     ELSE
+     C                     WRITEFTR001                     No Records Found
+     C                     ENDIF
+     C                     READ SLS13RF                  95
+     C                     ENDSR
+      **********************************************************
+      *          ROUTINE END                                   *
+      **********************************************************
+     C           SBEND     BEGSR
+     C                     MOVEL*BLANKS   RPLOOP
+     C                     SETON                     LR
+     C                     ENDSR
+      *
+** FUNCTION KEYS
+F1=Exit   F3=Menu
+F2=Previous
+** ERROR MESSAGE
+MCM0001 Input Error
+MCM0002 Compulsory Item. Please Input
+MCM0003 Invalid Input
+MCM0004 Searching record not found.
+MCM0005 Warning: Over credit limit.
+MCM0006 Please input one item only.
+MCM0007 Input data successfully.
+MCM0008 Update data successfully.
+MCM0009 Date from should be less than Date To.
+MCM0010 Report has been printed.
+MCM0011 Date should not exceed today's date.

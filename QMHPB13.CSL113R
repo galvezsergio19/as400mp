@@ -1,0 +1,805 @@
+     H            D
+     FCSL113D CF  E                    WORKSTN
+     FCUS13PF IF  E           K        DISK
+     FACC13PF UF  E           K        DISK
+     FGPF13PF IF  E           K        DISK
+     FSLS13PF IF  E           K        DISK                      A
+      *
+      *- Logical Files
+      *
+     FSLS13L2 IF  E           K        DISK                               LF For Auto Generated
+     F            SLS13RF                           KRENAMESLS13LF               Reference No.
+      *
+      * Error Messages and Function Keys
+      *
+     E                    FK      1   5 78
+     E                    EM      1  10 78
+      **********************************************************
+      *          DATA STRUCTURES                               *
+      **********************************************************
+      *-- Program Name
+     I           SDS
+     I                                        1  10 PGMNM
+      *-- Expiry Date Input DS
+     IDDT1        DS
+     I                                        1   60DSDT1
+     I                                        1   40DSDT0
+     I                                        1   20YY1
+     I                                        3   40YYDT1
+     I                                        5   60MMDT1
+      *-- Expiry Date DS
+     IDDT2        DS
+     I                                        1   40DSDT2
+     I                                        1   20MMDT2
+     I                                        3   40YYDT2
+      *-- Current Date Validator
+     IDDT3        DS
+     I                                        1   80DSDT3
+     I                                        1   2 DDDT3
+     I                                        3   4 MMDT3
+     I                                        5   8 YYDT3
+      *-- Validation (DMY)
+     IDDT4        DS
+     I                                        1   80DSDT4
+     I                                        1   2 DDDT4
+     I                                        3   4 MMDT4
+     I                                        5   8 YYDT4
+      *-- Expiry Date
+     IDDT5        DS
+     I                                        1   60DSDT5
+     I                                        1   20MMDT5
+     I                                        3   60YYDT5
+      *-- Transaction Date
+     IDDT6        DS
+     I                                        1   80DSDT6
+     I                                        1   20F3TDAY
+     I                                        3   40F3DMTH
+     I                                        5   80F3DYER
+      *-- Reference No. DS
+     IDREF        DS
+     I I            'CP'                      1   2 CPC
+     I                                        3  100CPN
+      **********************************************************
+      *          PARAMETER LIST                                *
+      **********************************************************
+     C           *ENTRY    PLIST                           F1 Window
+     C                     PARM           PRMFLD  2
+      *
+     C           PRMDTE    PLIST                           Date Validation (JVM900R)
+     C                     PARM           P@MODE  1
+     C                     PARM           P@IFMT  1
+     C                     PARM           P@OFMT  1
+     C                     PARM           P@FRDT  80
+     C                     PARM           P@TODT  80
+     C                     PARM           P@BFAF  1
+     C                     PARM           P@DCNT  30
+     C                     PARM           P@OTDT  80
+     C                     PARM           P@RTCD  2
+      **********************************************************
+      *          KEY LIST                                      *
+      **********************************************************
+     C           KEY#1     KLIST                           Customer
+     C                     KFLD           VAR1   160
+     C                     KFLD           VAR2    60
+      *
+     C           KEY#2     KLIST                           Generic
+     C                     KFLD           VAR3    20
+     C                     KFLD           VAR4    2
+      **********************************************************
+      *          MAIN LOOP PROGRAM                             *
+      **********************************************************
+      *
+     C           RPLOOP    CASEQ*BLANK    SB0000           Initial
+     C           RPLOOP    CASEQ'1'       SB0001           Input
+     C           RPLOOP    CASEQ'2'       SB0002           Display
+     C           RPLOOP    CASEQ'3'       SB0003           Sales Input
+     C           RPLOOP    CASEQ'4'       SB0004           Input Success
+     C           RPLOOP    CASEQ'E'       SBEND            End
+     C                     ENDCS
+      *
+      **********************************************************
+      *          ROUTINE 0000 - INITIALIZE                     *
+      **********************************************************
+     C           SB0000    BEGSR
+     C                     MOVELPGMNM     FHPGMQ
+     C                     MOVEL*BLANK    ERCDE   7
+     C                     SETOF                     6162
+     C                     MOVEL'1'       RPLOOP  1
+     C                     TIME           VARTIM 140
+     C                     MOVE VARTIM    VARTME  8
+     C                     ENDSR
+      **********************************************************
+      *          ROUTINE 0001 - INPUTS                         *
+      **********************************************************
+     C           SB0001    BEGSR
+     C                     MOVELFK,1      FMFKEY
+     C                     WRITEFMTMSG
+     C                     WRITEFMTHED
+     C                     EXFMTFMT010
+     C                     EXSR SBFKEY                     F1 / F3
+     C  NKANKC             EXSR SBVAL1                     ENTER
+     C                     ENDSR
+      **********************************************************
+      *          ROUTINE 0002 - DISPLAY                        *
+      **********************************************************
+     C           SB0002    BEGSR
+     C                     MOVEL*ZEROS    F1CNBR
+     C                     MOVEL*ZEROS    F1EDTE
+     C                     MOVELCUSCDN    F2CNBR
+     C                     MOVELCUSIDN    F2IDNO
+     C                     MOVELCUSNME    F2MNME
+      * Title
+     C                     Z-ADD1         VAR3
+     C                     MOVEL*BLANK    VAR4
+     C                     MOVELCUSTTL    VAR4
+     C           KEY#2     CHAINGPF13RF              94
+     C                     MOVELCUSTTL    F2TCDE
+     C                     MOVELGCODGD    F2TDES
+      * DOB - DMY
+     C                     MOVEL'Y'       P@IFMT
+     C                     MOVEL'D'       P@OFMT
+     C                     MOVELCUSDOB    P@FRDT
+     C                     EXSR VALDTE
+     C                     MOVELP@OTDT    F2CDOB
+      * Gender
+     C                     Z-ADD2         VAR3
+     C                     MOVEL*BLANK    VAR4
+     C                     MOVELCUSGDR    VAR4
+     C           KEY#2     CHAINGPF13RF              94
+     C                     MOVELCUSGDR    F2GCDE
+     C                     MOVELGCODGD    F2GDES
+      * Marital
+     C                     Z-ADD3         VAR3
+     C                     MOVEL*BLANK    VAR4
+     C                     MOVELCUSMRS    VAR4
+     C           KEY#2     CHAINGPF13RF              94
+     C                     MOVELCUSMRS    F2SCDE
+     C                     MOVELGCODGD    F2SDES
+     C                     MOVELCUSHM1    F2ADR1
+     C                     MOVELCUSHM2    F2ADR2
+     C                     MOVELCUSHM3    F2ADR3
+     C                     MOVELCUSMOB    F2MNBR
+      * ADTE - DMY
+     C                     MOVEL'Y'       P@IFMT
+     C                     MOVEL'D'       P@OFMT
+     C                     MOVELCUSADT    P@FRDT
+     C                     EXSR VALDTE
+     C                     MOVELP@OTDT    F2ADTE
+      * EDTE - MY
+     C                     MOVELMMDT2     MMDT5
+     C                     Z-ADDDSDT0     YYDT5
+     C                     Z-ADDDSDT5     F2EDTE
+      *
+      * Available Credit
+      *
+     C           F2CNBR    CHAINACC13RF              93
+     C                     MOVELACREDA    F2CAMT
+     C                     MOVELACREDU    F2CUSE
+     C                     Z-ADD0         AVACRD 110
+     C           ACREDA    SUB  ACREDU    AVACRD
+     C                     Z-ADDAVACRD    F2CAVL
+     C                     MOVELACREDP    F2PERN
+     C                     MOVELFK,2      FMFKEY
+     C                     WRITEFMTMSG
+     C                     WRITEFMTHED
+     C                     EXFMTFMT020
+      * Credit Limit
+      * Over
+     C           F2CNBR    CHAINACC13RF              93
+     C           F2CAVL    IFEQ 0
+     C                     MOVELEM,5      FMERRM           Over Credit Limit
+     C                     ELSE
+      * Below
+     C           *INKA     IFEQ *OFF                       ENTER
+     C           *INKB     ANDEQ*OFF
+     C           *INKC     ANDEQ*OFF
+     C                     MOVEL'3'       RPLOOP
+     C                     SETOF                     26
+     C                     CLEARFMT030
+     C                     MOVEL*DATE     DSDT6
+     C                     MOVEL'CP'      F3STYP
+     C                     ENDIF
+      *
+     C                     ENDIF
+     C                     EXSR SBFKEY                     F1 / F3 / F12
+     C                     ENDSR
+      **********************************************************
+      *          ROUTINE 0003 - SALES INPUT                    *
+      **********************************************************
+     C           SB0003    BEGSR
+     C                     SETOF                     23
+     C                     MOVELCUSCDN    F3CNBR
+     C                     MOVELCUSIDN    F3IDNO
+     C                     MOVELCUSNME    F3MNME
+     C                     MOVELFK,3      FMFKEY
+     C                     WRITEFMTMSG
+     C                     WRITEFMTHED
+     C                     EXFMTFMT030
+     C                     EXSR SBFKEY                     F1 / F3 / F12
+      * Function Keys
+     C                     SELEC
+     C           *INKB     WHEQ *ON                        F2
+     C                     MOVEL'2'       RPLOOP
+     C                     MOVEL*BLANKS   FMERRM
+     C           *INKJ     WHEQ *ON                        F10
+     C                     MOVEL'3'       RPLOOP
+     C           *INKA     WHEQ *OFF                       ENTER
+     C           *INKB     ANDEQ*OFF
+     C           *INKC     ANDEQ*OFF
+     C           *INKL     ANDEQ*OFF
+     C           *INKJ     ANDEQ*OFF
+     C                     EXSR SBVAL2
+     C                     ENDSL
+      * Month > 12
+     C           F3TAMT    IFGT AVACRE
+     C                     SETON                     76
+     C                     MOVELEM,5      FMERRM
+     C                     ENDIF
+      *
+     C                     ENDSR
+      **********************************************************
+      *          ROUTINE 0004 - INPUT SUCCESS                  *
+      **********************************************************
+     C           SB0004    BEGSR
+     C                     SETON                     23
+     C                     MOVELEM,7      FMERRM
+     C                     MOVELFK,5      FMFKEY
+     C                     WRITEFMTMSG
+     C                     WRITEFMTHED
+     C                     EXFMTFMT030
+     C                     EXSR SBFKEY                     F1 / F3
+     C   KB                MOVEL'4'       RPLOOP           F2 Disable
+     C   KL                MOVEL'4'       RPLOOP           F12 Disable
+     C           *INKJ     IFEQ *ON
+     C                     MOVEL'1'       RPLOOP           F10
+     C                     CLEARFMT010
+     C                     CLEARFMT020
+     C                     MOVEL*BLANKS   FMERRM
+     C                     ENDIF
+     C                     ENDSR
+      **********************************************************
+      *          FUNCTION KEYS                                 *
+      **********************************************************
+     C           SBFKEY    BEGSR
+     C                     SELEC
+     C           *INKA     WHEQ *ON                        F1 - EXIT
+     C                     EXSR WD0001
+      * F12 Pressed
+      *
+     C           PRMFLD    IFEQ 'KL'
+     C                     MOVEL*BLANK    FMERRM
+     C                     SETOF                     6162
+     C                     MOVEA'00000000'*IN,73
+     C                     ENDIF
+      *
+     C           *INKC     WHEQ *ON                        F3 - MENU
+     C                     MOVEL'E'       RPLOOP
+     C           *INKL     WHEQ *ON                        F12 - CANCEL
+     C                     MOVEL'1'       RPLOOP
+     C                     CLEARFMT020
+     C                     MOVEL*BLANKS   FMERRM
+     C                     ENDSL
+     C                     ENDSR
+      **********************************************************
+      *          VALIDATION ROUTINE - 1ST DTL SCREEN           *
+      **********************************************************
+     C           SBVAL1    BEGSR
+     C                     SELEC
+      * Both Blanks
+      *
+     C           F1CNBR    WHEQ *ZEROS
+     C           F1EDTE    ANDEQ*ZEROS
+     C                     MOVELEM,2      FMERRM
+     C                     SETON                     6162
+      * Card Blank
+      *
+     C           F1CNBR    WHEQ *ZEROS
+     C                     MOVELEM,2      FMERRM
+     C                     SETON                     61
+     C                     SETOF                     62
+      * Expiry Blank
+      *
+     C           F1EDTE    WHEQ *ZEROS
+     C                     MOVELEM,2      FMERRM
+     C                     SETOF                     61
+     C                     SETON                     62
+      * Both Not Blanks
+      *
+     C           F1CNBR    WHNE *ZEROS
+     C           F1EDTE    ANDNE*ZEROS
+     C                     MOVEL*BLANKS   FMERRM
+     C                     SETOF                     6162
+      * Convert EDTE - MY
+      *
+     C           F1CNBR    CHAINCUS13RF              80
+     C                     Z-ADDCUSEDT    DSDT1
+     C                     Z-ADDYYDT1     YYDT2
+     C                     Z-ADDMMDT1     MMDT2
+     C                     Z-ADDF1EDTE    EXPDTE  40
+      *
+      * Card Not Found
+      *
+     C           F1CNBR    CHAINACC13RF              92
+     C           *IN92     IFEQ *ON
+     C                     MOVELEM,4      FMERRM
+     C                     SETON                     61
+     C                     SETOF                     62
+     C                     ELSE
+      *
+      * Card Found
+      *
+     C           F1CNBR    CHAINCUS13RF              93
+     C           DSDT2     IFNE EXPDTE
+      *
+      * Exp Not Found
+      *
+     C                     MOVELEM,1      FMERRM
+     C                     SETOF                     61
+     C                     SETON                     62
+     C                     ELSE
+      * Exp Found
+     C                     MOVEL'2'       RPLOOP
+     C                     ENDIF
+     C                     ENDIF
+      *
+     C                     ENDSL
+     C                     ENDSR
+      **********************************************************
+      *          VALIDATION ROUTINE - 3RD DTL SCREEN           *
+      **********************************************************
+     C           SBVAL2    BEGSR
+      *
+      * Date Only
+     C           F3TDAY    IFEQ *ZEROS
+     C           F3DMTH    ANDEQ*ZEROS
+     C           F3DYER    ANDEQ*ZEROS
+     C                     SETON                     737475
+     C                     ENDIF
+      *
+      * Other
+     C           F3TAMT    IFEQ *ZEROS
+     C           F3ACDE    ANDEQ*ZEROS
+     C           F3SNME    ANDEQ*BLANKS
+     C           F3TNBR    ANDEQ*BLANKS
+     C           F3PCDE    ANDEQ*ZEROS
+     C                     SETON                     767778
+     C                     SETON                     7980
+     C                     ENDIF
+     C                     EXSR SBVALA                     Validate
+      *
+      * Record not found ( Agent )
+     C           *IN77     IFEQ *ON
+     C           *IN76     ANDEQ*OFF
+     C           *IN91     ANDEQ*ON
+     C           *IN73     ANDNE*ON
+     C           *IN74     ANDNE*ON
+     C           *IN75     ANDNE*ON
+     C           F3ACDE    ANDNE*ZEROS
+     C                     MOVELEM,4      FMERRM
+     C                     ENDIF
+      *
+      * Record not found ( Product )
+     C           *IN80     IFEQ *ON
+     C           *IN79     ANDEQ*OFF
+     C           *IN78     ANDEQ*OFF
+     C           *IN94     ANDEQ*ON
+     C           *IN73     ANDNE*ON
+     C           *IN74     ANDNE*ON
+     C           *IN75     ANDNE*ON
+     C           F3PCDE    ANDNE*ZEROS
+     C                     MOVELEM,4      FMERRM
+     C                     ENDIF
+      * All Correct
+     C           F3TDAY    IFNE *ZEROS
+     C           F3DMTH    ANDNE*ZEROS
+     C           F3DYER    ANDNE*ZEROS
+     C           F3TAMT    ANDNE*ZEROS
+     C           F3ACDE    ANDNE*ZEROS
+     C           F3ADES    ANDNE*BLANKS
+     C           F3SNME    ANDNE*BLANKS
+     C           F3TNBR    ANDNE*BLANKS
+     C           F3PCDE    ANDNE*ZEROS
+     C           F3PDES    ANDNE*BLANKS
+     C           *IN73     ANDNE*ON
+     C           *IN74     ANDNE*ON
+     C           *IN75     ANDNE*ON
+     C                     EXSR SBCONF
+     C                     ENDIF
+      *
+      * Wrong Date
+     C           P@RTCD    IFEQ '99'
+     C                     SETON                     737475
+     C                     MOVELEM,3      FMERRM
+     C                     ELSE
+     C                     EXSR SBVALB                     Validate Month < Today
+     C                     ENDIF
+      *
+      * Month > 12
+     C           F3DMTH    IFGT 12
+     C                     SETON                     74
+     C                     SETOF                     7375
+     C                     MOVELEM,10     FMERRM
+     C                     ENDIF
+      *
+     C                     ENDSR
+      *
+      **********************************************************
+      *          VALIDATION ROUTINE - 3RD DTL - DATES BLANKS   *
+      **********************************************************
+     C           SBVALA    BEGSR
+     C                     SELEC
+      * All Date Zeros
+      *
+     C           F3TDAY    WHEQ *ZEROS
+     C           F3DMTH    ANDEQ*ZEROS
+     C           F3DYER    ANDEQ*ZEROS
+     C                     SETON                     737475
+     C                     MOVELEM,1      FMERRM
+      * Neither Date Zeros
+      *
+     C           F3TDAY    WHEQ *ZEROS
+     C           F3DMTH    OREQ *ZEROS
+     C           F3DYER    OREQ *ZEROS
+     C                     EXSR SBVALF
+      * All Date Not Zeros
+      *
+     C           F3TDAY    WHNE *ZEROS
+     C           F3DMTH    ANDNE*ZEROS
+     C           F3DYER    ANDNE*ZEROS
+     C                     SETOF                     737475
+     C                     MOVEL*BLANKS   FMERRM
+      * Date Param
+     C                     MOVEL'D'       P@IFMT
+     C                     MOVEL'Y'       P@OFMT
+     C                     MOVELDSDT6     P@FRDT
+     C                     EXSR VALDTE
+      * Date Validated
+     C                     MOVEL'Y'       P@IFMT
+     C                     MOVEL'D'       P@OFMT
+     C                     MOVELP@OTDT    P@FRDT
+     C                     EXSR VALDTE
+     C                     Z-ADDP@OTDT    DSDT4
+     C                     MOVEL*DATE     DSDT3
+      * Date Error
+     C           P@RTCD    IFEQ '99'
+     C                     SETON                     737475
+     C                     MOVELEM,1      FMERRM
+     C                     ELSE
+     C                     EXSR SBVALB                     Validate Month < Today
+     C                     ENDIF
+      *
+     C                     ENDSL
+     C                     EXSR SBVALC                     Amount, ACDE
+     C                     EXSR SBVALD                     Shop, Term No.
+     C                     EXSR SBVALE                     PCODE
+      *
+     C                     ENDSR
+      **********************************************************
+      *          VALIDATION ROUTINE - 3RD DTL - DATES > TODAY  *
+      **********************************************************
+     C           SBVALB    BEGSR
+     C                     SELEC
+      * Year Greater
+      *
+     C           YYDT4     WHGT YYDT3
+     C                     SETON                     737475
+     C                     MOVELEM,9      FMERRM
+      * Year Equal
+      *
+     C           YYDT4     WHEQ YYDT3
+      * Month Greater
+     C           MMDT4     IFGT MMDT3
+     C                     SETON                     737475
+     C                     MOVELEM,9      FMERRM
+     C                     ENDIF
+      *
+      * Month Equal
+      *
+     C           MMDT4     IFEQ MMDT3
+      * Date Greater
+     C           DDDT4     IFGT DDDT3
+     C                     SETON                     737475
+     C                     MOVELEM,9      FMERRM
+     C                     ENDIF
+     C                     ENDIF
+      *
+     C                     ENDSL
+     C                     ENDSR
+      **********************************************************
+      *          VALIDATION ROUTINE - AMT, ACDE                *
+      **********************************************************
+     C           SBVALC    BEGSR
+     C           F3CNBR    CHAINCUS13RF              92
+     C           ACREDA    SUB  ACREDU    AVACRE 110
+     C                     SELEC
+      * Amount Zero
+      *
+     C           F3TAMT    WHEQ *ZEROS
+     C                     SETON                     76
+     C                     MOVELEM,2      FMERRM
+      * Amount > Cred Limit
+      *
+     C           F3TAMT    WHNE *ZEROS
+     C                     SETOF                     76
+     C                     ENDSL
+      * Agent Code Zero
+      *
+     C                     SELEC
+     C           F3ACDE    WHEQ *ZEROS
+     C                     SETON                     77
+     C                     MOVELEM,2      FMERRM
+     C                     MOVEL*BLANKS   F3ADES
+      * Agent Code Not Zero
+      *
+     C           F3ACDE    WHNE *ZEROS
+     C                     Z-ADD4         VAR3
+     C                     MOVELF3ACDE    VAR4
+     C           KEY#2     CHAINGPF13RF              91
+     C           *IN91     IFEQ *ON
+      *
+      * Agent Code Not Found
+     C                     SETON                     77
+     C                     MOVEL*BLANKS   F3ADES
+     C                     ELSE
+      * Agent Code Found
+     C                     SETOF                     77
+     C                     MOVELGCODGD    F3ADES
+     C                     ENDIF
+      *
+     C                     ENDSL
+     C                     ENDSR
+      **********************************************************
+      *          VALIDATION ROUTINE - SHOP AND TERM NO.        *
+      **********************************************************
+     C           SBVALD    BEGSR
+      * Shop
+     C                     SELEC
+     C           F3SNME    WHEQ *BLANKS
+     C                     SETON                     78
+     C                     MOVELEM,2      FMERRM
+     C           F3SNME    WHNE *BLANKS
+     C                     SETOF                     78
+     C                     ENDSL
+      * Terminal
+     C                     SELEC
+     C           F3TNBR    WHEQ *BLANKS
+     C                     SETON                     79
+     C                     MOVELEM,2      FMERRM
+     C           F3TNBR    WHNE *BLANKS
+     C                     SETOF                     79
+     C                     ENDSL
+      *
+     C                     ENDSR
+      **********************************************************
+      *          VALIDATION ROUTINE - PROD CODE                *
+      **********************************************************
+     C           SBVALE    BEGSR
+     C                     SELEC
+      * Product Code Blank
+      *
+     C           F3PCDE    WHEQ *ZEROS
+     C                     SETON                     80
+     C                     MOVELEM,2      FMERRM
+     C                     MOVEL*BLANKS   F3PDES
+      *
+      * Product Code Not Blank
+      *
+     C           F3PCDE    WHNE *ZEROS
+     C                     Z-ADD5         VAR3
+     C                     MOVELF3PCDE    VAR4
+     C           KEY#2     CHAINGPF13RF              94
+      *
+      * Product Code Not Found
+      *
+     C           *IN94     IFEQ *ON
+     C*                    MOVELEM,4      FMERRM
+     C                     SETON                     80
+     C                     MOVEL*BLANKS   F3PDES
+     C                     ELSE
+      *
+      * Product Code Found
+      *
+     C                     SETOF                     80
+     C*                    MOVEL*BLANKS   FMERRM
+     C                     MOVELGCODGD    F3PDES
+     C                     ENDIF
+      *
+      * Product Code and Desc Not Blank
+      *
+     C           F3PCDE    IFNE *ZEROS
+     C           F3PDES    ANDNE*BLANKS
+     C                     SETOF                     82
+     C                     ENDIF
+      *
+     C                     ENDSL
+     C                     ENDSR
+      **********************************************************
+      *          VALIDATION ROUTINE - 3RD DTL - NEITHER        *
+      **********************************************************
+     C           SBVALF    BEGSR
+      *
+      * Either 3 Zeros
+      *
+     C           F3TDAY    IFEQ *ZEROS
+     C                     SETON                     73
+     C                     MOVELEM,1      FMERRM
+     C                     ENDIF
+     C           F3DMTH    IFEQ *ZEROS
+     C                     SETON                     74
+     C                     MOVELEM,1      FMERRM
+     C                     ENDIF
+     C           F3DYER    IFEQ *ZEROS
+     C                     SETON                     75
+     C                     MOVELEM,1      FMERRM
+     C                     ENDIF
+      *
+      * Either 3 Not Zeros
+      *
+     C           F3TDAY    IFNE *ZEROS
+     C                     SETOF                     73
+     C                     ENDIF
+     C           F3DMTH    IFNE *ZEROS
+     C                     SETOF                     74
+     C                     ENDIF
+     C           F3DYER    IFNE *ZEROS
+     C                     SETOF                     75
+     C                     ENDIF
+     C                     ENDSR
+      **********************************************************
+      *          CONFIRM ROUTINE                               *
+      **********************************************************
+     C           SBCONF    BEGSR
+     C                     MOVEL*BLANKS   FCCCDE
+     C           *IN02     DOWEQ*OFF
+     C           FCCCDE    ANDNE'Y'
+     C           FCCCDE    ANDNE'N'
+      *
+      * Show Confirm
+     C                     SETON                     232425
+     C                     MOVELFK,4      FMFKEY
+     C                     WRITEFMTMSG
+     C                     WRITEFMTHED
+     C                     WRITEFMT030
+     C                     EXFMTFMTCNF
+      *
+     C                     SELEC
+      * Opt N or F2
+      *
+     C           *IN02     WHEQ *ON                        F2
+     C           FCCCDE    OREQ 'N'
+     C                     MOVEL'3'       RPLOOP
+     C                     MOVEL*BLANKS   FMERRM
+      * Opt Blank
+      *
+     C           FCCCDE    WHEQ *BLANKS
+     C                     SETON                     82
+     C                     MOVELEM,2      FMERRM
+      * Opt Not Y or N
+      *
+     C           FCCCDE    WHNE 'Y'
+     C           FCCCDE    ANDNE'N'
+     C                     SETON                     82
+     C                     MOVELEM,3      FMERRM
+      * Opt Y
+      *
+     C           FCCCDE    WHEQ 'Y'
+     C                     SETON                     26
+     C                     MOVEL*BLANKS   FMERRM
+     C                     EXSR SBSAVE                     Save Data
+     C                     ENDSL
+      *
+     C                     ENDDO
+     C                     ENDSR
+      **********************************************************
+      *          SAVE SALES ROUTINE                            *
+      **********************************************************
+     C           SBSAVE    BEGSR
+     C                     EXSR SBREFN                     Ref No. Auto Gen
+     C                     Z-ADDF3CNBR    SALCDN
+     C                     MOVEL'D'       P@IFMT
+     C                     MOVEL'Y'       P@OFMT
+     C                     MOVELDSDT4     P@FRDT
+     C                     EXSR VALDTE
+     C                     Z-ADDP@OTDT    SALDTE
+     C                     TIME           SALTME
+     C                     MOVELF3STYP    SALTYP
+     C                     Z-ADDF3TAMT    SALAMT
+     C                     MOVEL'MATCH'   SALSTS    P
+     C                     MOVEL*BLANK    SALPDT
+     C                     MOVELF3ACDE    SALAGT
+     C                     MOVELF3SNME    SALSHP
+     C                     MOVELF3TNBR    SALTER
+     C                     MOVELF3PCDE    SALPCD
+      * Posting Date
+     C                     MOVEL'D'       P@IFMT
+     C                     MOVEL'Y'       P@OFMT
+     C                     MOVELVARTME    P@FRDT
+     C                     EXSR VALDTE
+     C                     Z-ADDP@OTDT    SALPDT
+      * Remarks
+     C                     MOVEL*BLANK    SALRM1
+     C                     MOVEL*BLANK    SALRM2
+     C                     WRITESLS13RF
+      *
+      * Update Account File
+      *
+     C           F3CNBR    CHAINACC13RF              93
+     C                     ADD  F3TAMT    ACREDU
+     C           ACREDU    DIV  500       POINTS  60
+     C                     Z-ADDPOINTS    ACREDP
+     C                     UPDATACC13RF
+      * Move to Success
+     C                     MOVEL'4'       RPLOOP
+     C                     ENDSR
+      **********************************************************
+      *          AUTO GENERATOR OF REF NUMBER                  *
+      **********************************************************
+     C           SBREFN    BEGSR
+     C                     READ SLS13RF                  90
+     C           *LOVAL    SETLLSLS13LF              95
+     C                     READ SLS13LF                  95
+      * Read Until Last Rec.
+      *
+     C           *IN95     DOWEQ*OFF
+     C                     READ SLS13LF                  95
+     C                     ENDDO
+      *
+     C                     MOVE *BLANKS   CPN1    80
+     C                     MOVE SALREF    CPN1
+     C                     ADD  1         CPN1
+     C                     Z-ADDCPN1      CPN
+     C                     MOVELDREF      F3RNBR
+     C                     MOVELF3RNBR    SALREF
+     C                     ENDSR
+      **********************************************************
+      *          VALIDATE DATE                                 *
+      **********************************************************
+     C           VALDTE    BEGSR
+     C                     MOVEL*ZEROS    P@TODT
+     C                     MOVEL'3'       P@MODE
+     C                     MOVEL'A'       P@BFAF
+     C                     MOVEL*ZEROS    P@DCNT
+     C                     MOVEL' '       P@OTDT
+     C                     MOVEL' '       P@RTCD
+     C                     CALL 'JVM900R' PRMDTE
+     C                     ENDSR
+      **********************************************************
+      *          WINDOW ROUTINE 0001                           *
+      **********************************************************
+     C           WD0001    BEGSR
+     C                     MOVEL*BLANKS   PRMFLD
+     C                     CALL 'CSL613C'
+     C                     PARM           PRMFLD
+      * Enter Pressed
+      *
+     C           PRMFLD    IFEQ '00'
+     C                     MOVEL*BLANKS   RPLOOP
+     C                     SETON                     LR
+     C                     ENDIF
+      *
+     C                     ENDSR
+      **********************************************************
+      *          ROUTINE END                                   *
+      **********************************************************
+     C           SBEND     BEGSR
+     C                     MOVEL*BLANKS   RPLOOP
+     C                     SETON                     LR
+     C                     ENDSR
+      *
+** FUNCTION KEYS
+F1=Exit   F3=Menu
+F1=Exit   F3=Menu   F12=Cancel
+F1=Exit   F2=Previous   F3=Menu   F12=Cancel
+F2=Previous
+F1=Exit   F3=Menu   F10=Start
+** ERROR MESSAGE
+MCM0001 Input Error
+MCM0002 Compulsory Item. Please Input
+MCM0003 Invalid Input
+MCM0004 Searching record not found.
+MCM0005 Warning: Over credit limit.
+MCM0006 Please input one item only.
+MCM0007 Input data successfully.
+MCM0008 Update data successfully.
+MCM0009 Date should not exceed today's date.
+MCM0010 Month should be less than 12.

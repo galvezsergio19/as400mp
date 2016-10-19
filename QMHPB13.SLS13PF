@@ -1,0 +1,16 @@
+     A          R SLS13RF
+     A            SALCDN        16S 0       COLHDG('Card Number')
+     A            SALDTE         8S 0       COLHDG('Sales Date')
+     A            SALTME         6S 0       COLHDG('Sales Time')
+     A            SALREF        10A         COLHDG('Reference Number')
+     A            SALTYP         2A         COLHDG('Sales Type')
+     A            SALAMT         9S 0       COLHDG('Amount')
+     A            SALSTS        10A         COLHDG('Status')
+     A            SALPDT         8S 0       COLHDG('Posting Date')
+     A            SALAGT         2A         COLHDG('Agent Name')
+     A            SALSHP        30A         COLHDG('Shop Name')
+     A            SALTER        10A         COLHDG('Terminal Number')
+     A            SALPCD         2A         COLHDG('Product Code')
+     A            SALRM1        30A         COLHDG('Remarks 1')
+     A            SALRM2        30A         COLHDG('Remarks 2')
+     A          K SALCDN

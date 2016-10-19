@@ -1,0 +1,39 @@
+     A*========================================================================*
+     A*                                                                        *
+     A*       AEON CREDIT SERVICE SYSTEM                                       *
+     A*                                                                        *
+     A*       PROJECT ID  :  CC-2013-XX-XXX                                    *
+     A*       FILE ID     :  REFFPP02                                          *
+     A*       FUNCTION    :  Field Reference File - Numeric at 2 Decimal Place *
+     A*       AUTHOR      :  ACSS-Jaymel Vergara                               *
+     A*       CODING DATE :  2013/01/16                                        *
+     A*                                                                        *
+     A*========================================================================*
+     A* Modification Logs                                                      *
+     A* ~~~~~~~~~~~~~~~~~                                                      *
+     A* Ver.   Project          PIC            Date        Description         *
+     A*------------------------------------------------------------------------*
+     A*                                                                        *
+     A*========================================================================*
+     A          R REFFPR02
+     A*
+     A            RFFLD01        3S 2       TEXT('Amount Field 3S,2')
+     A            RFFLD02        4S 2       TEXT('Amount Field 4S,2')
+     A            RFFLD03        5S 2       TEXT('Amount Field 5S,2')
+     A            RFFLD04        6S 2       TEXT('Amount Field 6S,2')
+     A            RFFLD05        7S 2       TEXT('Amount Field 7S,2')
+     A            RFFLD06        8S 2       TEXT('Amount Field 8S,2')
+     A            RFFLD07        9S 2       TEXT('Amount Field 9S,2')
+     A            RFFLD08       10S 2       TEXT('Amount Field 10S,2')
+     A            RFFLD09       11S 2       TEXT('Amount Field 11S,2')
+     A            RFFLD10       12S 2       TEXT('Amount Field 12S,2')
+     A            RFFLD11       13S 2       TEXT('Amount Field 13S,2')
+     A            RFFLD12       14S 2       TEXT('Amount Field 14S,2')
+     A            RFFLD13       15S 2       TEXT('Amount Field 15S,2')
+     A            RFFLD14       16S 2       TEXT('Amount Field 16S,2')
+     A            RFFLD15       17S 2       TEXT('Amount Field 17S,2')
+     A            RFFLD16       18S 2       TEXT('Amount Field 18S,2')
+     A            RFFLD17       19S 2       TEXT('Amount Field 19S,2')
+     A            RFFLD18       20S 2       TEXT('Amount Field 20S,2')
+     A            RFFLD19       21S 2       TEXT('Amount Field 21S,2')
+     A            RFFLD20       22S 2       TEXT('Amount Field 22S,2')
